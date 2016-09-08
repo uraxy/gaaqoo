@@ -70,10 +70,6 @@ def transpose(src_img, exif_orientation):
 
 
 def overlay_text(img, text):
-    """画像の右下に文字を書きます.
-
-    img自体が変更されます。
-    """
     if not text:
         return
     draw = PIL.ImageDraw.Draw(img)
@@ -88,7 +84,7 @@ def overlay_text(img, text):
 
 
 def exif_datetime_to_text(exif_datetime):
-    """ EXIF形式のDateTimeを、写真にオーバーレイするための文字列に変換します.
+    """ Convert EXIF style DateTime to text for overlay.
 
     '2016:07:10 17:19:53' => '2016/07/10 17:19'
     """
@@ -185,14 +181,13 @@ def main():
             except:
                 pass
 
-    # 変換対象出なかった古いファイルを削除する
-    # FIXME **** 何かのエラーがあった時にも、ここで大量のファイルが削除されてしまう！
+    # delete dst-file which have no src-file
     dst_filepaths_exists = get_filepaths(DST_DIR)
     for fp in dst_filepaths_exists:
         if fp not in dst_filepaths:
             print('Removing deprecated file: ' + fp)
             os.remove(fp)
-    # 空のディレクトリを削除したほうがベター、だけど、まいっか
+    # removing empty directories is better, but not implemented :-)
 
 if __name__ == '__main__':
     main()
