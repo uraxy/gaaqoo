@@ -1,5 +1,7 @@
 # gaaqoo
 
+[![Build Status](https://travis-ci.org/uraxy/gaaqoo.svg?branch=master)](https://travis-ci.org/uraxy/gaaqoo)
+
 Convert images into ones suitable for digital photo frames.
 - Reduce images.
 - Rotate images based on EXIF `Orientation`.
