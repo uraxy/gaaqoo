@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
+from gaaqoo import __version__, __description__
 
 # https://setuptools.readthedocs.io/en/latest/setuptools.html#basic-use
 setup(
     name='gaaqoo',
-    version='0.1.0',
+    version=__version__,
     packages=find_packages(),
     # scripts = ['say_hello.py'],
     install_requires=[
@@ -13,7 +14,7 @@ setup(
     # metadata for upload to PyPI
     author='uraxy',
     author_email='uraxy123@gmail.com',
-    description='Convert images into ones suitable for digital photo frames.',
+    description=__description__,
     license='MIT',
     # keywords=['dummy1', 'dumm2'],
     url='https://github.com/uraxy/gaaqoo',
@@ -25,9 +26,8 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.5',
-        'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
+        'Topic :: Multimedia :: Graphics :: Graphics Conversion',
         'Topic :: Utilities',
     ],
 )
