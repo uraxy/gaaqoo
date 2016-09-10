@@ -1,6 +1,7 @@
 # gaaqoo
 
 [![Build Status](https://travis-ci.org/uraxy/gaaqoo.svg?branch=master)](https://travis-ci.org/uraxy/gaaqoo)
+[![Code Health](https://landscape.io/github/uraxy/gaaqoo/master/landscape.svg?style=flat)](https://landscape.io/github/uraxy/gaaqoo/master)
 
 Convert images into ones suitable for digital photo frames.
 - Reduce images.
