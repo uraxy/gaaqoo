@@ -97,6 +97,8 @@ def exif_datetime_to_text(exif_datetime):
 
 
 def get_filepaths(dirpath, suffixes=None, excludes=None):
+    if excludes is None:
+        excludes = []
     if dirpath.endswith('/'):
         dirpath = dirpath[:-1]
     globed = glob.glob(dirpath + '/**', recursive=True)
