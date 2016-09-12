@@ -7,17 +7,20 @@ import time
 import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
+import config
 
 # ============================================================
 # Config
 # ============================================================
-SRC_DIR = '/home/uraxy/Pictures/gaaqoo-src'
-DST_DIR = '/home/uraxy/Pictures/gaaqoo-dst'
-SUFFIX = ('.jpg', '.JPG', '.jpeg', '.JPEG')
-EXCLUDE = ('_EXCLUDE_', '_NG_')  # exclude if filepath contains there
-DST_IMG_SIZE = (800, 480)
+# SRC_DIR = '/home/uraxy/Pictures/gaaqoo-src'
+# DST_DIR = '/home/uraxy/Pictures/gaaqoo-dst'
+# SUFFIX = ('.jpg', '.JPG', '.jpeg', '.JPEG')
+# EXCLUDE = ('_EXCLUDE_', '_NG_')  # exclude if filepath contains there
+# DST_IMG_SIZE = (800, 480)
+# FONT = '/usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf'
+# DATETIME_FORMAT = r'(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})'
 # ============================================================
-EXIF_DATETIME_PARSER = re.compile(r'(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})')
+EXIF_DATETIME_PARSER = re.compile(config.DATETIME_FORMAT)
 
 
 def get_hash(filepath):
@@ -74,7 +77,7 @@ def overlay_text(img, text):
         return
     draw = PIL.ImageDraw.Draw(img)
     draw.font = PIL.ImageFont.truetype(
-        font='/usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf',
+        font=config.FONT,
         size=20)
     txt_size = draw.font.getsize(text)  # (width, height)
 
@@ -123,19 +126,19 @@ def get_filepaths(dirpath, suffixes=None, excludes=None):
 
 
 def get_dst_filepath(src_filepath, hashcode):
-    dst_fp = DST_DIR + src_filepath[len(SRC_DIR):]
+    dst_fp = config.DST_DIR + src_filepath[len(config.SRC_DIR):]
     dst_fp += '.gaaqoo_{}.jpg'.format(hashcode)
-    # dst_fp += '.{}_{}x{}.jpg'.format(hashcode, DST_IMG_SIZE[0], DST_IMG_SIZE[1])
+    # dst_fp += '.{}_{}x{}.jpg'.format(hashcode, config.DST_IMG_SIZE[0], config.DST_IMG_SIZE[1])
     return dst_fp
 
 
 def main():
-    if not os.path.isdir(SRC_DIR):
-        print('SRC_DIR is not a directory: {}'.format(SRC_DIR))
+    if not os.path.isdir(config.SRC_DIR):
+        print('config.SRC_DIR is not a directory: {}'.format(config.SRC_DIR))
         exit(1)
-    src_filepaths = get_filepaths(SRC_DIR, suffixes=SUFFIX, excludes=EXCLUDE)
+    src_filepaths = get_filepaths(config.SRC_DIR, suffixes=config.SUFFIX, excludes=config.EXCLUDE)
     if not src_filepaths:
-        print('No image file found in SRC_DIR: {}'.format(SRC_DIR))
+        print('No image file found in config.SRC_DIR: {}'.format(config.SRC_DIR))
         exit(1)
 
     dst_filepaths = []
@@ -163,7 +166,7 @@ def main():
             # print('  DataTimeOriginal={}'.format(dt))
 
             # resize, rotate
-            img.thumbnail(DST_IMG_SIZE, PIL.Image.ANTIALIAS)
+            img.thumbnail(config.DST_IMG_SIZE, PIL.Image.ANTIALIAS)
             img = transpose(img, ori)
             if dt:
                 overlay_text(img, exif_datetime_to_text(dt))
@@ -184,7 +187,7 @@ def main():
                 pass
 
     # delete dst-file which have no src-file
-    dst_filepaths_exists = get_filepaths(DST_DIR)
+    dst_filepaths_exists = get_filepaths(config.DST_DIR)
     for fp in dst_filepaths_exists:
         if fp not in dst_filepaths:
             print('Removing deprecated file: ' + fp)

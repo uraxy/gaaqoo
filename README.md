@@ -19,17 +19,15 @@ $ pip install Pillow  # PIL
 
 # Config
 
-Edit gaaqoo/main.py.
+Edit gaaqoo/config.py.
 ```python
-# ============================================================
-# Config
-# ============================================================
-SRC_DIR = '/home/uraxy/Pictures/gaaqoo-src'  # symlink in my case,
-DST_DIR = '/home/uraxy/Pictures/gaaqoo-dst'  # symlink in my case,
-SUFFIX = ('.jpg', '.JPG', '.jpeg', '.JPEG')  # target image files' suffix
+SRC_DIR = '/home/uraxy/Pictures/gaaqoo-src'
+DST_DIR = '/home/uraxy/Pictures/gaaqoo-dst'
+SUFFIX = ('.jpg', '.JPG', '.jpeg', '.JPEG')
 EXCLUDE = ('_EXCLUDE_', '_NG_')  # exclude if filepath contains there
 DST_IMG_SIZE = (800, 480)
-# ============================================================
+FONT = '/usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf'
+DATETIME_FORMAT = r'(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})'
 ```
 
 # Run
@@ -45,6 +43,9 @@ MIT License
 
 ----------
 # For developers
+## example images
+- [exif-orientation-examples](https://github.com/recurser/exif-orientation-examples)
+
 ## Rotation of images.
 - `display` (ImageMagick) does not rotate an image regardless of EXIF, so it is suitable for debugging.
 - `display -auto-orient` rotates an image based on EXIF.
