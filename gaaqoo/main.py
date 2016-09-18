@@ -72,7 +72,7 @@ def transpose(src_img, exif_orientation):
     return dst_img
 
 
-def overlay_text(img, text):
+def _overlay_text(img, text):
     if not text:
         return
     draw = PIL.ImageDraw.Draw(img)
@@ -83,6 +83,11 @@ def overlay_text(img, text):
 
     x = img.width - txt_size[0] - 5
     y = img.height - txt_size[1] - 5
+    # border
+    for xx in range(x-3, x+4):
+        for yy in range(y-3, y+4):
+            draw.text((xx, yy), text, (0, 0, 0))
+    # text
     draw.text((x, y), text, (255, 255, 255))
 
 
@@ -172,7 +177,7 @@ def main():
             img = img.resize(dst_img_size, resample=PIL.Image.LANCZOS)
 
             if dt:
-                overlay_text(img, exif_datetime_to_text(dt))
+                _overlay_text(img, exif_datetime_to_text(dt))
 
             # save image
             d = dst_fp.rpartition('/')
