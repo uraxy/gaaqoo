@@ -35,6 +35,17 @@ def print_exif(exif):
         print('  {} (PIL.ExifTags.TAGS[0x{:0>4x}]): {}'.format(PIL.ExifTags.TAGS[k], k, v))
 
 
+def _get_contain_size(src_img_size):
+    ratio_x = config.DST_IMG_SIZE[0] / src_img_size[0]
+    ratio_y = config.DST_IMG_SIZE[1] / src_img_size[1]
+    if ratio_x < ratio_y:
+        size = (config.DST_IMG_SIZE[0], int(src_img_size[1] * ratio_x))
+    else:
+        size = (int(src_img_size[0] * ratio_y), config.DST_IMG_SIZE[1])
+
+    return size
+
+
 def get_exif(img):
     try:
         exif = img._getexif()  # AttributeError
@@ -165,9 +176,12 @@ def main():
             dt = get_datetime_original(exif)
             # print('  DataTimeOriginal={}'.format(dt))
 
-            # resize, rotate
-            img.thumbnail(config.DST_IMG_SIZE, PIL.Image.ANTIALIAS)
+            # rotate: Must before resizing.
             img = transpose(img, ori)
+            # resize: Not thumbnail but scale up/down to keep overlay texts at same scale.
+            dst_img_size = _get_contain_size(img.size)
+            img = img.resize(dst_img_size, resample=PIL.Image.LANCZOS)
+
             if dt:
                 overlay_text(img, exif_datetime_to_text(dt))
 
