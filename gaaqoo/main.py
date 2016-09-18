@@ -9,17 +9,6 @@ import PIL.ImageDraw
 import PIL.ImageFont
 import config
 
-# ============================================================
-# Config
-# ============================================================
-# SRC_DIR = '/home/uraxy/Pictures/gaaqoo-src'
-# DST_DIR = '/home/uraxy/Pictures/gaaqoo-dst'
-# SUFFIX = ('.jpg', '.JPG', '.jpeg', '.JPEG')
-# EXCLUDE = ('_EXCLUDE_', '_NG_')  # exclude if filepath contains there
-# DST_IMG_SIZE = (800, 480)
-# FONT = '/usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf'
-# DATETIME_FORMAT = r'(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})'
-# ============================================================
 EXIF_DATETIME_PARSER = re.compile(config.DATETIME_FORMAT)
 
 
@@ -89,7 +78,7 @@ def overlay_text(img, text):
     draw = PIL.ImageDraw.Draw(img)
     draw.font = PIL.ImageFont.truetype(
         font=config.FONT,
-        size=20)
+        size=config.FONT_SIZE)
     txt_size = draw.font.getsize(text)  # (width, height)
 
     x = img.width - txt_size[0] - 5
