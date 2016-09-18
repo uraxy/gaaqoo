@@ -10,7 +10,8 @@ import PIL.ImageFont
 import config
 
 EXIF_DATETIME_PARSER = re.compile(config.DATETIME_FORMAT)
-
+SRC_DIR = os.path.expandvars(os.path.expanduser(config.SRC_DIR))
+DST_DIR = os.path.expandvars(os.path.expanduser(config.DST_DIR))
 
 def get_hash(filepath):
     with open(filepath, 'rb') as f:
@@ -131,19 +132,19 @@ def get_filepaths(dirpath, suffixes=None, excludes=None):
 
 
 def get_dst_filepath(src_filepath, hashcode):
-    dst_fp = config.DST_DIR + src_filepath[len(config.SRC_DIR):]
+    dst_fp = DST_DIR + src_filepath[len(SRC_DIR):]
     dst_fp += '.gaaqoo_{}.jpg'.format(hashcode)
     # dst_fp += '.{}_{}x{}.jpg'.format(hashcode, config.DST_IMG_SIZE[0], config.DST_IMG_SIZE[1])
     return dst_fp
 
 
 def main():
-    if not os.path.isdir(config.SRC_DIR):
-        print('config.SRC_DIR is not a directory: {}'.format(config.SRC_DIR))
+    if not os.path.isdir(SRC_DIR):
+        print('config.SRC_DIR is not a directory: {}'.format(SRC_DIR))
         exit(1)
-    src_filepaths = get_filepaths(config.SRC_DIR, suffixes=config.SUFFIX, excludes=config.EXCLUDE)
+    src_filepaths = get_filepaths(SRC_DIR, suffixes=config.SUFFIX, excludes=config.EXCLUDE)
     if not src_filepaths:
-        print('No image file found in config.SRC_DIR: {}'.format(config.SRC_DIR))
+        print('No image file found in config.SRC_DIR: {}'.format(SRC_DIR))
         exit(1)
 
     dst_filepaths = []
@@ -195,7 +196,7 @@ def main():
                 pass
 
     # delete dst-file which have no src-file
-    dst_filepaths_exists = get_filepaths(config.DST_DIR)
+    dst_filepaths_exists = get_filepaths(DST_DIR)
     for fp in dst_filepaths_exists:
         if fp not in dst_filepaths:
             print('Removing deprecated file: ' + fp)

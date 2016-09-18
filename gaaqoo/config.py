@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-SRC_DIR = '/home/uraxy/Pictures/gaaqoo-src'
-DST_DIR = '/home/uraxy/Pictures/gaaqoo-dst'
+SRC_DIR = '~/Pictures/gaaqoo-src'
+DST_DIR = '~/Pictures/gaaqoo-dst'
 SUFFIX = ('.jpg', '.JPG', '.jpeg', '.JPEG')
 EXCLUDE = ('_EXCLUDE_', '_NG_')  # exclude if filepath contains there
 DST_IMG_SIZE = (800, 480)
