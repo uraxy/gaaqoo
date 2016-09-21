@@ -285,9 +285,7 @@ def main():
             print('  -> Skip, already exists: ' + dst_fp)
             continue
 
-        try:
-            img = PIL.Image.open(fp)
-
+        with PIL.Image.open(fp) as img:
             # EXIF
             exif = _get_exif(img)
             ori = _get_orientation(exif)
@@ -312,14 +310,8 @@ def main():
             if not os.path.isdir(d[0]):
                 os.makedirs(d[0])
             img.save(dst_fp, 'JPEG', quality=95, optimize=True)
-        except OSError:
-            print("  -> OSError (not image file?): " + fp)
-        finally:
-            try:
-                # when OSError, UnboundLocalError: local variable 'img' referenced before assignment
-                img.close()
-            except:
-                pass
+        # except OSError:
+        #     print("  -> OSError (not image file?): " + fp)
 
     # delete dst-file which have no src-file
     dst_filepaths_exists = _get_filepaths(conf['DST_DIR'])
