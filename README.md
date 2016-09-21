@@ -15,26 +15,29 @@ Convert images into ones suitable for digital photo frames.
 
 ```shell
 $ pip install Pillow  # PIL
+$ pip install pyyaml
 ```
 
-# Config
+# Config (YAML)
 
-Edit gaaqoo/config.py.
-```python
-SRC_DIR = '~/Pictures/gaaqoo-src'
-DST_DIR = '~/Pictures/gaaqoo-dst'
-SUFFIX = ('.jpg', '.JPG', '.jpeg', '.JPEG')
-EXCLUDE = ('_EXCLUDE_', '_NG_')  # exclude if filepath contains there
-DST_IMG_SIZE = (800, 480)
-FONT = '/usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf'
-FONT_SIZE = 30
-DATETIME_FORMAT = r'(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})'
+Edit conf/default.yml
+```YAML
+# -*- coding: utf-8 -*-
+
+SRC_DIR: ~/Pictures/gaaqoo-src
+DST_DIR: ~/Pictures/gaaqoo-dst
+SUFFIX: ['.jpg', '.JPG', '.jpeg', '.JPEG']
+# exclude if filepath contains there
+EXCLUDE: ['_EXCLUDE_', '_NG_']
+DST_IMG_SIZE: [800, 480]
+FONT: /usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf
+FONT_SIZE: 30
 ```
 
 # Run
 
 ```shell
-$ python -u gaaqoo/main.py
+$ python -u gaaqoo/convert.py
 ```
 `-u`: unbuffered stdout and stderr
 
