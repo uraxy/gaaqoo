@@ -46,11 +46,11 @@ def _get_contain_size(src_img_size, dst_img_size):
     """Get image size which fit `dst_img_size`.
 
     Args:
-        src_img_size (x, y):
-        dst_img_size (x, y):
+        src_img_size (int, int): (x, y)
+        dst_img_size (int, int): (x, y)
 
     Returns:
-        (x, y):
+        (int, int): (x, y)
     """
     ratio_x = dst_img_size[0] / src_img_size[0]
     ratio_y = dst_img_size[1] / src_img_size[1]
