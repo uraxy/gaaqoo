@@ -11,16 +11,38 @@ Convert images into ones suitable for digital photo frames.
 
 ----------
 
-# Setup
+# Install
 
 ```shell
-$ pip install Pillow  # PIL
-$ pip install pyyaml
+$ pip install gaaqoo
 ```
+
+
+# Usage
+
+```shell
+$ gaaqoo --version
+gaaqoo version 0.9.2
+$ gaaqoo --help
+usage: gaaqoo [-h] [-V] [-f FILE.yml]
+
+Convert images into ones suitable for digital photo frames.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -V, --version         show program's version number and exit
+  -f FILE.yml, --config FILE.yml
+                        config YAML file (default:
+                        ~/.config/gaaqoo/default.yml)
+$
+```
+
 
 # Config (YAML)
 
-Edit conf/default.yml
+~/.config/gaaqoo/default.yml
+(have to create by yourself for now.)
+
 ```YAML
 # -*- coding: utf-8 -*-
 
@@ -30,20 +52,32 @@ SUFFIX: ['.jpg', '.JPG', '.jpeg', '.JPEG']
 # exclude if filepath contains there
 EXCLUDE: ['_EXCLUDE_', '_NG_']
 DST_IMG_SIZE: [800, 480]
-FONT: /usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf
+FONT: /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
 FONT_SIZE: 30
 ```
-
-# Run
-
-```shell
-$ python -u gaaqoo/convert.py
-```
-`-u`: unbuffered stdout and stderr
 
 
 # License
 MIT License
+
+# Libraries
+```shell
+$ cat requirements.txt | xargs -n1 yolk -l -f License,Author,Home-page,Summary | egrep -v '^Versions with'
+Pillow (3.3.1)
+    Summary: Python Imaging Library (Fork)
+    Home-page: http://python-pillow.org
+    Author: Alex Clark (Fork Author)
+    License: Standard PIL License
+
+PyYAML (3.12)
+    Summary: YAML parser and emitter for Python
+    Home-page: http://pyyaml.org/wiki/PyYAML
+    Author: Kirill Simonov
+    License: MIT
+
+$
+```
+
 
 ----------
 # For developers
