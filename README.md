@@ -22,8 +22,6 @@ $ pip install gaaqoo
 # Usage
 
 ```shell
-$ gaaqoo --version
-gaaqoo version 0.9.2
 $ gaaqoo --help
 usage: gaaqoo [-h] [-V] [-f FILE.yml]
 
