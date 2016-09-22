@@ -9,6 +9,7 @@ setup(
     # scripts = ['say_hello.py'],
     install_requires=[
       'Pillow',
+      'PyYAML',
     ],
 
     # metadata for upload to PyPI
