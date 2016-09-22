@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Convert image files."""
 import glob
 import hashlib
 import os
@@ -168,8 +169,9 @@ def _overlay_text(
 
 _EXIF_DATETIME_PARSER = re.compile(r'(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})')
 
+
 def _exif_datetime_to_text(exif_datetime):
-    """ Convert EXIF style DateTime to text for overlay.
+    """Convert EXIF style DateTime to text for overlay.
 
     Args:
         exif_datetime (str): e.g. '2016:07:10 17:19:53'
@@ -254,9 +256,15 @@ def _get_dst_filepath(src_dir, dst_dir, src_filepath):
     return dst_fp
 
 
-def main():
-    """Main."""
-    conf = _read_config('conf/default.yml')  # TODO dummy filepath
+def main(conf_yaml_file):
+    """Main.
+
+    Args:
+        conf_yaml_file (str): File path of config YAML file
+    Returns:
+        None:
+    """
+    conf = _read_config(conf_yaml_file)
 
     if not os.path.isdir(conf['SRC_DIR']):
         print('SRC_DIR is not a directory: {}'.format(conf['SRC_DIR_ORG']))

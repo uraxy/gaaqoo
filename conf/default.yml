@@ -6,5 +6,5 @@ SUFFIX: ['.jpg', '.JPG', '.jpeg', '.JPEG']
 # exclude if filepath contains there
 EXCLUDE: ['_EXCLUDE_', '_NG_']
 DST_IMG_SIZE: [800, 480]
-FONT: /usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf
+FONT: /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
 FONT_SIZE: 30

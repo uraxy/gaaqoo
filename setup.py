@@ -18,9 +18,9 @@ setup(
     license='MIT',
     # keywords=['dummy1', 'dumm2'],
     url='https://github.com/uraxy/gaaqoo',
-    # entry_points={
-    #     'console_scripts': ['gaaqoo=gaaqoo.command_line:main'],
-    # },
+    entry_points={
+        'console_scripts': ['gaaqoo=gaaqoo.command_line:main'],
+    },
     classifiers=[
         'Environment :: Console',
         'Programming Language :: Python',
