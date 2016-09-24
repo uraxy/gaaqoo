@@ -209,7 +209,7 @@ def _get_filepaths(dirpath, suffixes=None, excludes=None):
     if not dirpath.endswith('/'):
         dirpath = dirpath + '/'
 
-    globed = glob.glob(dirpath + '**', recursive=True)
+    globed = glob.glob(dirpath + '**', recursive=True)  # >= Python 3.5
     filepaths = []
     for fp in globed:
         # photo file?
