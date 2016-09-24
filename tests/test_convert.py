@@ -118,3 +118,9 @@ class TestConvert(unittest.TestCase):
         expected = []
         actual = gaaqoo.convert._get_filepaths(dirpath, suffixes, excludes)
         self.assertEqual(expected, actual)
+
+    def test__get_filepaths__without_suffixes_and_excludes(self):
+        dirpath = '/dev'
+        expected = []
+        actual = gaaqoo.convert._get_filepaths(dirpath)
+        self.assertEqual(expected, actual)

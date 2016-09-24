@@ -192,7 +192,10 @@ def _exif_datetime_to_text(exif_datetime):
     return(text)
 
 
-def _get_filepaths(dirpath, suffixes=None, excludes=None):
+def _get_filepaths(
+        dirpath,
+        suffixes=('.jpg', '.JPG', '.jpeg', '.JPEG'),
+        excludes=None):
     """find filepaths which meet conditions (suffixes and excludes).
 
     Args:
