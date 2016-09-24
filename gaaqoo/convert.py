@@ -28,8 +28,13 @@ def _read_config(yaml_filepath):
             raise e
     config['SRC_DIR_ORG'] = config['SRC_DIR']
     config['SRC_DIR'] = os.path.expandvars(os.path.expanduser(config['SRC_DIR']))
+    if not config['SRC_DIR'].endswith('/'):
+        config['SRC_DIR'] = config['SRC_DIR'] + '/'
+
     config['DST_DIR_ORG'] = config['DST_DIR']
     config['DST_DIR'] = os.path.expandvars(os.path.expanduser(config['DST_DIR']))
+    if not config['DST_DIR'].endswith('/'):
+        config['DST_DIR'] = config['DST_DIR'] + '/'
     return config
 
 
@@ -201,10 +206,10 @@ def _get_filepaths(dirpath, suffixes=None, excludes=None):
     suffixes = tuple(suffixes) if suffixes else ()
     if excludes is None:
         excludes = ()
-    if dirpath.endswith('/'):
-        dirpath = dirpath[:-1]
+    if not dirpath.endswith('/'):
+        dirpath = dirpath + '/'
 
-    globed = glob.glob(dirpath + '/**', recursive=True)
+    globed = glob.glob(dirpath + '**', recursive=True)
     filepaths = []
     for fp in globed:
         # photo file?
@@ -250,6 +255,12 @@ def _get_dst_filepath(src_dir, dst_dir, src_filepath):
     Returns:
         str: filepath
     """
+
+    if not src_dir.endswith('/'):
+        src_dir += '/'
+    if not dst_dir.endswith('/'):
+        dst_dir += '/'
+
     hashcode = _hash(src_filepath)
     dst_fp = dst_dir + src_filepath[len(src_dir):]
     dst_fp += '.gaaqoo_{}.jpg'.format(hashcode)
