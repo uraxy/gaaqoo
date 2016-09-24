@@ -141,7 +141,7 @@ def _transpose(src_img, exif_orientation):
 def _overlay_text(
         img,
         text,
-        font='/usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf',
+        font='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
         font_size=30):
     """Overlay text on `Image`.
 
