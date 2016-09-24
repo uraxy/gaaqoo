@@ -155,7 +155,7 @@ def _overlay_text(
         None:
     """
     if not text:
-        return
+        return None
     draw = PIL.ImageDraw.Draw(img)
     draw.font = PIL.ImageFont.truetype(
         font=font,
@@ -170,6 +170,7 @@ def _overlay_text(
             draw.text((xx, yy), text, (0, 0, 0))
     # text
     draw.text((x, y), text, (255, 255, 255))
+    return None
 
 
 _EXIF_DATETIME_PARSER = re.compile(r'(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})')
@@ -342,6 +343,3 @@ def main(conf_yaml_file):
             print('Removing deprecated file: ' + fp)
             os.remove(fp)
     # removing empty directories is better, but not implemented :-)
-
-if __name__ == '__main__':
-    main()
