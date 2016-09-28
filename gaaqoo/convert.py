@@ -124,6 +124,7 @@ def _transpose(src_img, exif_orientation):
     Returns:
         PIL.Image: Rotated image
     """
+    # TODO exif_orientationはsrc_imgから取れるからまとめるべき
     convert_image = {
         1: lambda img: img,
         2: lambda img: img.transpose(PIL.Image.FLIP_LEFT_RIGHT),
@@ -207,7 +208,8 @@ def _get_filepaths(
     Returns:
         list of str: filepaths
     """
-    suffixes = tuple(suffixes) if suffixes else ()
+    if isinstance(suffixes, list):
+        suffixes = tuple(suffixes)
     if excludes is None:
         excludes = ()
     if not dirpath.endswith('/'):
@@ -259,7 +261,6 @@ def _get_dst_filepath(src_dir, dst_dir, src_filepath):
     Returns:
         str: filepath
     """
-
     if not src_dir.endswith('/'):
         src_dir += '/'
     if not dst_dir.endswith('/'):
