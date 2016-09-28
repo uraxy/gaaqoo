@@ -12,6 +12,10 @@ setup(
       'PyYAML',
     ],
 
+    # http://doc.pytest.org/en/latest/goodpractices.html#integrating-with-setuptools-python-setup-py-test-pytest-runner
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
+
     # metadata for upload to PyPI
     author='uraxy',
     author_email='uraxy123@gmail.com',
