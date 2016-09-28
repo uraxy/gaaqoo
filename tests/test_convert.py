@@ -99,51 +99,97 @@ class TestConvert(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test__hash(self):
-        filepath = '/dev/null'
-        expected = 'da39a3ee'
+        filepath = './tests/images/IMG_20150301_121137.jpg'
+        expected = '4145e0a5'
         actual = gaaqoo.convert._hash(filepath)
         self.assertEqual(actual, expected)
 
     def test__get_dst_filepath__1(self):
-        src_dir = '/dev'  # not endwith('/')
+        src_dir = './tests'  # not endwith('/')
         dst_dir = '/tmp/'  # endswith('/')
-        src_filepath = '/dev/null'
-        expected = '/tmp/null.gaaqoo_da39a3ee.jpg'
+        src_filepath = './tests/images/IMG_20150301_121137.jpg'
+        expected = '/tmp/images/IMG_20150301_121137.jpg.gaaqoo_4145e0a5.jpg'
         actual = gaaqoo.convert._get_dst_filepath(src_dir, dst_dir, src_filepath)
         self.assertEqual(actual, expected)
 
     def test__get_dst_filepath__2(self):
-        src_dir = '/dev/'  # endwith('/')
+        src_dir = './tests/'  # endwith('/')
         dst_dir = '/tmp'  # not endswith('/')
-        src_filepath = '/dev/null'
-        expected = '/tmp/null.gaaqoo_da39a3ee.jpg'
+        src_filepath = './tests/images/IMG_20150301_121137.jpg'
+        expected = '/tmp/images/IMG_20150301_121137.jpg.gaaqoo_4145e0a5.jpg'
         actual = gaaqoo.convert._get_dst_filepath(src_dir, dst_dir, src_filepath)
         self.assertEqual(actual, expected)
 
     def test__get_filepaths(self):
-        dirpath = '/dev'
-        suffixes = ('null', 'zero')
+        dirpath = './tests'
+        suffixes = ('.jpg', '.JPG')
+        excludes = ('_EXCLUDE_', '_DUMMY_')
+        expected = ['./tests/images/IMG_20150301_121137.jpg']
+        actual = gaaqoo.convert._get_filepaths(dirpath, suffixes, excludes)
+        self.assertEqual(actual, expected)
+
+    def test__get_filepaths__suffixes_1_tuple(self):
+        dirpath = './tests'
+        suffixes = ('.dummy')
         excludes = ('_EXCLUDE_', '_DUMMY_')
         expected = []
         actual = gaaqoo.convert._get_filepaths(dirpath, suffixes, excludes)
         self.assertEqual(actual, expected)
 
-    def test__get_filepaths__without_suffixes_and_excludes(self):
-        dirpath = '/dev'
+    def test__get_filepaths__suffixes_1_list(self):
+        dirpath = './tests'
+        suffixes = ['.dummy']
+        excludes = ('_EXCLUDE_', '_DUMMY_')
         expected = []
+        actual = gaaqoo.convert._get_filepaths(dirpath, suffixes, excludes)
+        self.assertEqual(actual, expected)
+
+    def test__get_filepaths__suffixes2(self):
+        dirpath = './tests'
+        suffixes = ('dummy', 'dummy2')
+        excludes = ('_EXCLUDE_', '_DUMMY_')
+        expected = []
+        actual = gaaqoo.convert._get_filepaths(dirpath, suffixes, excludes)
+        self.assertEqual(actual, expected)
+
+    def test__get_filepaths__excludes(self):
+        dirpath = './tests'
+        suffixes = ('jpg', 'JPG')
+        excludes = ('images')
+        expected = []
+        actual = gaaqoo.convert._get_filepaths(dirpath, suffixes, excludes)
+        self.assertEqual(actual, expected)
+
+    def test__get_filepaths__without_suffixes_and_excludes(self):
+        dirpath = './tests'
+        expected = ['./tests/images/IMG_20150301_121137.jpg']
         actual = gaaqoo.convert._get_filepaths(dirpath)
         self.assertEqual(actual, expected)
 
     def test__get_exif(self):
-        img = PIL.Image.new('1', (1, 1))  # no EXIF
-        expected = None
-        actual = gaaqoo.convert._get_exif(img)
+        # expected = None
+        with PIL.Image.open('./tests/images/IMG_20150301_121137.jpg', 'r') as img:
+            actual = gaaqoo.convert._get_exif(img)
+        # self.assertEqual(actual, expected)  # Nothing
+
+    def test__get_datetime_original(self):
+        expected = '2015:03:01 12:11:38'
+        with PIL.Image.open('./tests/images/IMG_20150301_121137.jpg', 'r') as img:
+            exif = gaaqoo.convert._get_exif(img)
+        actual = gaaqoo.convert._get_datetime_original(exif)
         self.assertEqual(actual, expected)
 
     def test__get_datetime_original__exif_none(self):
         exif = None
         expected = None
         actual = gaaqoo.convert._get_datetime_original(exif)
+        self.assertEqual(actual, expected)
+
+    def test__get_orientation(self):
+        expected = 1
+        with PIL.Image.open('./tests/images/IMG_20150301_121137.jpg', 'r') as img:
+            exif = gaaqoo.convert._get_exif(img)
+        actual = gaaqoo.convert._get_orientation(exif)
         self.assertEqual(actual, expected)
 
     def test__get_orientation__exif_none(self):
@@ -153,8 +199,8 @@ class TestConvert(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test__overlay_text__text_none(self):
-        img = PIL.Image.new('1', (1, 1))  # no EXIF
         text = None
         expected = None
-        actual = gaaqoo.convert._overlay_text(img, text)
-        self.assertEqual(actual, expected)
+        with PIL.Image.open('./tests/images/IMG_20150301_121137.jpg', 'r') as img:
+            actual = gaaqoo.convert._overlay_text(img, text)
+        self.assertEqual(actual, expected)  # always None
