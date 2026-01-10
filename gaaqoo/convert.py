@@ -1,14 +1,29 @@
 # -*- coding: utf-8 -*-
 """Convert image files."""
-import glob
 import hashlib
 import os
 import re
 import time
+from pathlib import Path
+
+import PIL.ExifTags
 import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
 import yaml
+
+
+_TRANSPOSE_OPS = {
+    1: lambda img: img,
+    2: lambda img: img.transpose(PIL.Image.FLIP_LEFT_RIGHT),
+    3: lambda img: img.transpose(PIL.Image.ROTATE_180),
+    4: lambda img: img.transpose(PIL.Image.FLIP_TOP_BOTTOM),
+    5: lambda img: img.transpose(PIL.Image.FLIP_LEFT_RIGHT).transpose(PIL.Image.ROTATE_90),
+    6: lambda img: img.transpose(PIL.Image.ROTATE_270),
+    7: lambda img: img.transpose(PIL.Image.FLIP_LEFT_RIGHT).transpose(PIL.Image.ROTATE_270),
+    8: lambda img: img.transpose(PIL.Image.ROTATE_90),
+}
+
 
 
 def _read_config(yaml_filepath):
@@ -22,10 +37,10 @@ def _read_config(yaml_filepath):
     """
     with open(yaml_filepath, 'r') as f:
         try:
-            config = yaml.load(f)
-        except yaml.YAMLError as e:  # FIXME
-            print(e)  # FIXME
-            raise e
+            config = yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            raise RuntimeError(f"Failed to parse config: {e}") from e
+
     config['SRC_DIR_ORG'] = config['SRC_DIR']
     config['SRC_DIR'] = os.path.expandvars(os.path.expanduser(config['SRC_DIR']))
     if not config['SRC_DIR'].endswith('/'):
@@ -124,19 +139,9 @@ def _transpose(src_img, exif_orientation):
     Returns:
         PIL.Image: Rotated image
     """
-    # TODO exif_orientationはsrc_imgから取れるからまとめるべき
-    convert_image = {
-        1: lambda img: img,
-        2: lambda img: img.transpose(PIL.Image.FLIP_LEFT_RIGHT),
-        3: lambda img: img.transpose(PIL.Image.ROTATE_180),
-        4: lambda img: img.transpose(PIL.Image.FLIP_TOP_BOTTOM),
-        5: lambda img: img.transpose(PIL.Image.FLIP_LEFT_RIGHT).transpose(PIL.Image.ROTATE_90),
-        6: lambda img: img.transpose(PIL.Image.ROTATE_270),
-        7: lambda img: img.transpose(PIL.Image.FLIP_LEFT_RIGHT).transpose(PIL.Image.ROTATE_270),
-        8: lambda img: img.transpose(PIL.Image.ROTATE_90),
-    }
-    dst_img = convert_image[exif_orientation](src_img)
-    return dst_img
+    if exif_orientation not in _TRANSPOSE_OPS:
+        return src_img
+    return _TRANSPOSE_OPS[exif_orientation](src_img)
 
 
 def _overlay_text(
@@ -161,10 +166,13 @@ def _overlay_text(
     draw.font = PIL.ImageFont.truetype(
         font=font,
         size=font_size)
-    txt_size = draw.font.getsize(text)  # (width, height)
+    
+    bbox = draw.textbbox((0, 0), text, font=draw.font)
+    txt_width = bbox[2] - bbox[0]
+    txt_height = bbox[3] - bbox[1]
 
-    x = img.width - txt_size[0] - 5
-    y = img.height - txt_size[1] - 5
+    x = img.width - txt_width - 5
+    y = img.height - txt_height - 5
     # border
     for xx in range(x-3, x+4):
         for yy in range(y-3, y+4):
@@ -212,26 +220,28 @@ def _get_filepaths(
         suffixes = tuple(suffixes)
     if excludes is None:
         excludes = ()
-    if not dirpath.endswith('/'):
-        dirpath = dirpath + '/'
+    
+    p_dir = Path(os.path.expandvars(dirpath)) # Ensure env vars are expanded before check
+    if not p_dir.is_dir():
+        return []
 
-    globed = glob.glob(dirpath + '**', recursive=True)  # >= Python 3.5
     filepaths = []
-    for fp in globed:
-        # photo file?
-        if not os.path.isfile(fp):
+    # recursive search
+    for p in p_dir.rglob('*'):
+        if not p.is_file():
             continue
-        if suffixes and not fp.endswith(suffixes):
+        if suffixes and not p.name.endswith(suffixes):
             continue
-        # exclude?
+        
+        fp_str = str(p)
         skip = False
-        for s in excludes:  # TODO must ignore leading SRC_DIR part.
-            if fp.find(s) >= 0:
+        for s in excludes: 
+            if s in fp_str:
                 skip = True
                 break
         if skip:
             continue
-        filepaths.append(fp)
+        filepaths.append(fp_str)
     return filepaths
 
 
@@ -244,10 +254,15 @@ def _hash(filepath):
     Returns:
         str: Hash
     """
+    h = hashlib.sha1()
+    chunk_size = 4096
     with open(filepath, 'rb') as f:
-        data = f.read()
-    h = hashlib.sha1(data).hexdigest()
-    return h[:8]
+        while True:
+            chunk = f.read(chunk_size)
+            if not chunk:
+                break
+            h.update(chunk)
+    return h.hexdigest()[:8]
 
 
 def _get_dst_filepath(src_dir, dst_dir, src_filepath):
@@ -255,21 +270,37 @@ def _get_dst_filepath(src_dir, dst_dir, src_filepath):
 
     Args:
         src_dir (str):
-        dst_DIR (str):
+        dst_dir (str):
         src_filepath (str):
 
     Returns:
         str: filepath
     """
-    if not src_dir.endswith('/'):
-        src_dir += '/'
-    if not dst_dir.endswith('/'):
-        dst_dir += '/'
-
     hashcode = _hash(src_filepath)
-    dst_fp = dst_dir + src_filepath[len(src_dir):]
-    dst_fp += '.gaaqoo_{}.jpg'.format(hashcode)
-    return dst_fp
+    
+    p_src = Path(src_filepath)
+    p_src_dir = Path(src_dir)
+    p_dst_dir = Path(dst_dir)
+    
+    try:
+        rel = p_src.relative_to(p_src_dir)
+    except ValueError:
+        # Fallback for when strings don't perfectly match but should be relative
+        # e.g. /tmp/a vs /tmp/a/
+        # resolve() might help but might be slow or follow symlinks. 
+        # We try simple string fallback if relative_to fails, attempting to mimic old behavior safely
+        if str(src_filepath).startswith(str(src_dir).rstrip(os.sep)):
+             rel = str(src_filepath)[len(str(src_dir).rstrip(os.sep)):]
+             if rel.startswith(os.sep): 
+                 rel = rel[1:]
+             rel = Path(rel)
+        else:
+             raise
+
+    dst_fp = p_dst_dir / rel
+    # Match existing suffix appending behavior: filename.jpg -> filename.jpg.gaaqoo_HASH.jpg
+    # The existing code did: dst_fp += '.gaaqoo_....jpg'
+    return f"{dst_fp}.gaaqoo_{hashcode}.jpg"
 
 
 def main(conf_yaml_file):

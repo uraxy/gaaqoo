@@ -124,7 +124,7 @@ class TestConvert(unittest.TestCase):
         dirpath = './tests'
         suffixes = ('.jpg', '.JPG')
         excludes = ('_EXCLUDE_', '_DUMMY_')
-        expected = ['./tests/images/IMG_20150301_121137.jpg']
+        expected = ['tests/images/IMG_20150301_121137.jpg']
         actual = gaaqoo.convert._get_filepaths(dirpath, suffixes, excludes)
         self.assertEqual(actual, expected)
 
@@ -162,7 +162,7 @@ class TestConvert(unittest.TestCase):
 
     def test__get_filepaths__without_suffixes_and_excludes(self):
         dirpath = './tests'
-        expected = ['./tests/images/IMG_20150301_121137.jpg']
+        expected = ['tests/images/IMG_20150301_121137.jpg']
         actual = gaaqoo.convert._get_filepaths(dirpath)
         self.assertEqual(actual, expected)
 

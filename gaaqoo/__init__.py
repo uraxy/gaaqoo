@@ -1,3 +1,4 @@
-"""gaaqoo."""
-__version__ = '0.9.3'
-__description__ = 'Convert images into ones suitable for digital photo frames.'
+from importlib.metadata import version, metadata
+
+__version__ = version("gaaqoo")
+__description__ = metadata("gaaqoo")["Summary"]

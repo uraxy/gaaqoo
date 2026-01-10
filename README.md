@@ -1,9 +1,7 @@
 # gaaqoo
 
 [![PyPI version](https://badge.fury.io/py/gaaqoo.svg)](https://badge.fury.io/py/gaaqoo)
-[![Build Status](https://travis-ci.org/uraxy/gaaqoo.svg?branch=master)](https://travis-ci.org/uraxy/gaaqoo)
-[![Code Health](https://landscape.io/github/uraxy/gaaqoo/master/landscape.svg?style=flat)](https://landscape.io/github/uraxy/gaaqoo/master)
-[![Coverage Status](https://coveralls.io/repos/github/uraxy/gaaqoo/badge.svg?branch=master)](https://coveralls.io/github/uraxy/gaaqoo?branch=master)
+[![Test](https://github.com/uraxy/gaaqoo/actions/workflows/test.yml/badge.svg)](https://github.com/uraxy/gaaqoo/actions/workflows/test.yml)
 
 Convert images into ones suitable for digital photo frames.
 - **Reduce file size to save SD card spaces**: Scale down images to fit just to the screen size of your digital photo frame.
@@ -73,22 +71,8 @@ MIT License
 
 
 # Dependencies
-```shell
-$ cat requirements.txt | xargs -n1 yolk -l -f License,Author,Home-page,Summary | egrep -v '^Versions with'
-Pillow (3.3.1)
-    Summary: Python Imaging Library (Fork)
-    Home-page: http://python-pillow.org
-    Author: Alex Clark (Fork Author)
-    License: Standard PIL License
-
-PyYAML (3.12)
-    Summary: YAML parser and emitter for Python
-    Home-page: http://pyyaml.org/wiki/PyYAML
-    Author: Kirill Simonov
-    License: MIT
-
-$
-```
+- Pillow (>= 10.0.0)
+- PyYAML (>= 6.0)
 
 
 ----------
