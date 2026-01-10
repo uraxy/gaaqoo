@@ -10,19 +10,11 @@ import PIL.ExifTags
 import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
+import PIL.ImageOps
 import yaml
 
 
-_TRANSPOSE_OPS = {
-    1: lambda img: img,
-    2: lambda img: img.transpose(PIL.Image.FLIP_LEFT_RIGHT),
-    3: lambda img: img.transpose(PIL.Image.ROTATE_180),
-    4: lambda img: img.transpose(PIL.Image.FLIP_TOP_BOTTOM),
-    5: lambda img: img.transpose(PIL.Image.FLIP_LEFT_RIGHT).transpose(PIL.Image.ROTATE_90),
-    6: lambda img: img.transpose(PIL.Image.ROTATE_270),
-    7: lambda img: img.transpose(PIL.Image.FLIP_LEFT_RIGHT).transpose(PIL.Image.ROTATE_270),
-    8: lambda img: img.transpose(PIL.Image.ROTATE_90),
-}
+
 
 
 
@@ -114,34 +106,7 @@ def _get_datetime_original(exif):
     return datetime_original
 
 
-def _get_orientation(exif):
-    """Get Orientation from EXIF.
 
-    Args:
-        exif (dict):
-
-    Returns:
-        int or None: Orientation
-    """
-    if not exif:
-        return None
-    orientation = exif.get(0x0112)  # EXIF: Orientation
-    return orientation
-
-
-def _transpose(src_img, exif_orientation):
-    """Rotate image by EXIF Orientation.
-
-    Args:
-        src_img (PIL.Image):
-        exif_orientation (int):
-
-    Returns:
-        PIL.Image: Rotated image
-    """
-    if exif_orientation not in _TRANSPOSE_OPS:
-        return src_img
-    return _TRANSPOSE_OPS[exif_orientation](src_img)
 
 
 def _overlay_text(
@@ -343,15 +308,10 @@ def main(conf_yaml_file):
         with PIL.Image.open(fp) as img:
             # EXIF
             exif = _get_exif(img)
-            ori = _get_orientation(exif)
-            # print('  Orientation={}'.format(ori))
-            if not ori:  # None or 0
-                ori = 1
             dt = _get_datetime_original(exif)
-            # print('  DataTimeOriginal={}'.format(dt))
 
             # rotate: Must before resizing.
-            img = _transpose(img, ori)
+            img = PIL.ImageOps.exif_transpose(img)
             # resize: Not thumbnail but scale up/down to keep overlay texts at same scale.
             dst_img_size = _get_contain_size(img.size, conf['DST_IMG_SIZE'])
             img = img.resize(dst_img_size, resample=PIL.Image.LANCZOS)
