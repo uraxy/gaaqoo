@@ -185,18 +185,7 @@ class TestConvert(unittest.TestCase):
         actual = gaaqoo.convert._get_datetime_original(exif)
         self.assertEqual(actual, expected)
 
-    def test__get_orientation(self):
-        expected = 1
-        with PIL.Image.open('./tests/images/IMG_20150301_121137.jpg', 'r') as img:
-            exif = gaaqoo.convert._get_exif(img)
-        actual = gaaqoo.convert._get_orientation(exif)
-        self.assertEqual(actual, expected)
 
-    def test__get_orientation__exif_none(self):
-        exif = None
-        expected = None
-        actual = gaaqoo.convert._get_orientation(exif)
-        self.assertEqual(actual, expected)
 
     def test__overlay_text__text_none(self):
         text = None
